@@ -1,13 +1,19 @@
-import { Tabs } from 'expo-router';
+import { Redirect, Tabs } from 'expo-router';
 import React from 'react';
 
 import { HapticTab } from '@/components/haptic-tab';
 import { IconSymbol } from '@/components/ui/icon-symbol';
 import { Colors } from '@/constants/theme';
 import { useColorScheme } from '@/hooks/use-color-scheme';
+import { useAuth } from '@/context/auth-context';
 
 const TabLayout = () => {
   const colorScheme = useColorScheme();
+  const { user, isInitializing } = useAuth();
+
+  if (isInitializing) return null;
+  if (!user) return <Redirect href="/welcome" />;
+  if (user.userType === 'child' && user.status === 'pending') return <Redirect href="/pending" />;
 
   return (
     <Tabs
